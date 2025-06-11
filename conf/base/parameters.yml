@@ -1,0 +1,2 @@
+#hero_api:
+#  base_url: "${HERO_INFO_URL}"  # Sintaxe padrão do OmegaConf
