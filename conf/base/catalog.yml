@@ -1,0 +1,161 @@
+# Here you can define all your data sets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+#
+# We support interacting with a variety of data stores including local file systems, cloud, network and HDFS
+#
+# An example data set definition can look as follows:
+#
+#bikes:
+#  type: pandas.CSVDataset
+#  filepath: "data/01_raw/bikes.csv"
+#
+#weather:
+#  type: spark.SparkDataset
+#  filepath: s3a://your_bucket/data/01_raw/weather*
+#  file_format: csv
+#  credentials: dev_s3
+#  load_args:
+#    header: True
+#    inferSchema: True
+#  save_args:
+#    sep: '|'
+#    header: True
+#
+#scooters:
+#  type: pandas.SQLTableDataset
+#  credentials: scooters_credentials
+#  table_name: scooters
+#  load_args:
+#    index_col: ['name']
+#    columns: ['name', 'gear']
+#  save_args:
+#    if_exists: 'replace'
+#    # if_exists: 'fail'
+#    # if_exists: 'append'
+#
+# The Data Catalog supports being able to reference the same file using two different Dataset implementations
+# (transcoding), templating and a way to reuse arguments that are frequently repeated. See more here:
+# https://docs.kedro.org/en/stable/data/data_catalog.html
+
+#LolHistoric2014:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2014_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2015:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2015_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2016:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2016_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2017:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2017_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2018:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2018_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2019:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2019_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2020:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2020_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2021:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2021_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2022:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2022_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2023:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2023_LoL_esports_match_data_from_OraclesElixir.csv
+
+#LolHistoric2024:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/2024_LoL_esports_match_data_from_OraclesElixir.csv
+#{% for year in range(2014, 2025) %}
+#LolHistoric{{ year }}:
+#  type: pandas.CSVDataset
+#  filepath: data/01_raw/LolHistoric/{{ year }}_LoL_esports_match_data_from_OraclesElixir.csv
+#{% endfor %}
+LolHistoric:
+  type: partitions.PartitionedDataset
+  #type: kedro_datasets.partitions.partitioned_dataset.PartitionedDataset
+  path: C:/Users/Micro/Documents/Projetos/MobaChampion/MobaChampionAnalysis/mca/data/01_raw/LolHistoric
+  dataset: pandas.CSVDataset
+  #load_mode: dataset
+lol_historic_years:
+  type: mca.custom_data.year_partition.YearPartitionsDataset
+  partitioned_dataset: 
+    #type: partitions.PartitionedDataset
+    path: data/01_raw/LolHistoric
+    dataset:
+      type: pandas.CSVDataset
+      load_args:
+        sep: ","  # Example CSV parameter
+        encoding: 'utf-8'
+
+metadataChampion:
+  type: json.JSONDataset
+  filepath: data/01_raw/metadata/champion_metadata.json
+
+HeroInfo_data:
+  type: json.JSONDataset
+  filepath: data/02_intermediate/HeroInfo_data.json
+
+damageTypeCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/damageTypeCount.csv
+
+modifierNameCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/modifierNameCount.csv
+
+attributeNameCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/attributeNameCount.csv
+
+championCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/championCount.csv
+
+championDamageCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/championDamageCount.csv
+
+championGoldCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/championGoldCount.csv
+
+championMinionCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/championMinionCount.csv
+
+championKdaCount:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/championKdaCount.csv  
+
+versusScenarios:
+  type: mca.custom_data.versus_scenarios.VersusScenarios  # Mesma classe customizada
+  partitioned_dataset: 
+    path: data/03_primary/versusScenarios  # Caminho diferente para este output
+    dataset:
+      type: pandas.CSVDataset
+      load_args:
+        sep: ","
+        encoding: 'utf-8'
+      save_args:
+        index: false  # Adicione parâmetros de salvamento conforme necessário
+
+#versusScenarios:
+#  type: json.JSONDataset
+#  filepath: data/03_primary/versusScenarios.json
